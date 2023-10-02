@@ -17,9 +17,10 @@ app.post("/api/transaction", async (req, res) => {
   console.log(process.env.MONGO_URL);
   //@ts-ignore
   await mongoose.connect(process.env.MONGO_URL);
-  const { name, description, datetime } = req.body;
+  const { name, price, description, datetime } = req.body;
   const transaction = await TransactionModel.create({
     name,
+    price,
     description,
     datetime,
   });
