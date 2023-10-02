@@ -9,14 +9,23 @@ function App() {
 
   function addNewTransaction(ev: any) {
     ev.preventDefault();
+    const price = name.split(" ")[0];
     const url = "http://localhost:4040/api/transaction";
 
     fetch(url, {
       method: "POST",
       headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ name, description, datetime }),
+      body: JSON.stringify({
+        price,
+        name: name.substr(price.length + 1),
+        description,
+        datetime,
+      }),
     }).then((res) => {
       console.log(res);
+      setName("");
+      setDescription("");
+      setDateTime("");
     });
   }
 
