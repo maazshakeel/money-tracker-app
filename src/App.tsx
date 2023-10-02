@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import "./App.css";
 
@@ -6,6 +7,19 @@ function App() {
   const [datetime, setDateTime] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
+  function addNewTransaction(ev: any) {
+    ev.preventDefault();
+    const url = "http://localhost:4040/api/transaction";
+
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ name, description, datetime }),
+    }).then((res) => {
+      console.log(res);
+    });
+  }
+
   return (
     <main>
       <h1>
@@ -13,7 +27,7 @@ function App() {
       </h1>
 
       {/* FORM */}
-      <form>
+      <form onSubmit={addNewTransaction}>
         {/* basic */}
         <div className="basic">
           <input
