@@ -1,11 +1,24 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [name, setName] = useState<string>("");
   const [datetime, setDateTime] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [transactions, setTransactions] = useState<any>("");
+
+  useEffect(() => {
+    getTransactions().then((transactions) => {
+      setTransactions(transactions);
+    });
+  }, []);
+  async function getTransactions() {
+    const url = "http://localhost:4040/api/transactions";
+    const res = await fetch(url);
+    const json = await res.json();
+    return json;
+  }
 
   function addNewTransaction(ev: any) {
     ev.preventDefault();
@@ -29,10 +42,20 @@ function App() {
     });
   }
 
+  let balance: number | any = 0;
+  for (const transaction of transactions) {
+    balance = balance + transaction.price;
+  }
+
+  balance = balance.toFixed(2);
+  const fraction = balance.split(".")[1];
+  balance = balance.split(".")[0];
+
   return (
     <main>
       <h1>
-        $400<span>.00</span>
+        ${balance}
+        <span>{fraction}</span>
       </h1>
 
       {/* FORM */}
@@ -62,59 +85,30 @@ function App() {
           />
         </div>
         <button type="submit">Add transaction</button>
+        {transactions.length}
       </form>
 
       {/* TRANSACTIONS */}
       <div className="transactions">
-        <div className="transaction" style={{ borderTop: 0 }}>
-          <div className="left">
-            <div className="name">New Samsung TV</div>
-            <div className="description">was time to buy a new tv</div>
-          </div>
-          <div className="right">
-            <div className="price red">-$550</div>
-            <div className="datetime">2023-10-1 15:45</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">Gig job new website</div>
-            <div className="description">was time to buy a new tv</div>
-          </div>
-          <div className="right">
-            <div className="price green">+$400</div>
-            <div className="datetime">2023-10-1 15:45</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">Sell</div>
-            <div className="description">was time to buy a new tv</div>
-          </div>
-          <div className="right">
-            <div className="price green">+$8550</div>
-            <div className="datetime">2023-10-1 15:45</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">Bought a iphone15</div>
-            <div className="description">was time to buy a new tv</div>
-          </div>
-          <div className="right">
-            <div className="price red">-$1550</div>
-            <div className="datetime">2023-10-1 15:45</div>
-          </div>
-        </div>
+        {transactions.length > 0 &&
+          transactions.map((transaction: any) => (
+            <div className="transaction">
+              <div className="left">
+                <div className="name">{transaction.name}</div>
+                <div className="description">{transaction.description}</div>
+              </div>
+              <div className="right">
+                <div
+                  className={
+                    "price " + (transaction.price > 0 ? "green" : "red")
+                  }
+                >
+                  {transaction.price}
+                </div>
+                <div className="datetime">{transaction.datetime}</div>
+              </div>
+            </div>
+          ))}
       </div>
     </main>
   );

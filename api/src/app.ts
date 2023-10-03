@@ -27,6 +27,14 @@ app.post("/api/transaction", async (req, res) => {
   res.json(transaction);
 });
 
+app.get("/api/transactions", async (req, res) => {
+  console.log(process.env.MONGO_URL);
+  //@ts-ignore
+  await mongoose.connect(process.env.MONGO_URL);
+  const transactions = await TransactionModel.find();
+  res.json(transactions);
+});
+
 app.listen(4040, () => {
   console.log("App is running!");
 });
